@@ -10,7 +10,8 @@ import {
     UserCircleIcon,
     ArrowLeftOnRectangleIcon,
     Cog8ToothIcon,
-    CalendarDaysIcon
+    CalendarDaysIcon,
+    ChevronDoubleLeftIcon
   } from '@heroicons/react/24/outline'
 
 import Logo from './Logo'
@@ -22,8 +23,8 @@ import { useRouter } from 'next/navigation'
 
 import { useOnClickOutside } from 'usehooks-ts'
 
-import { slideState, messagesState } from '@/app/recoil/atoms'
-import { useSetRecoilState, useRecoilValue } from 'recoil'
+import { slideState } from '@/app/recoil/atoms'
+import { useSetRecoilState } from 'recoil'
 import Notifications from '../widgets/Notifications'
 
 
@@ -33,9 +34,10 @@ import Notifications from '../widgets/Notifications'
 
     const [ path, setPath ] = useState(router.pathname)
     const [ user, setUser ] = useState(false)
+    const [ minimize, setMinimize ] = useState(false)
 
     const setSlide = useSetRecoilState(slideState)
-    const notifications = useRecoilValue(messagesState)
+ 
 
     const ref = useRef(null)
 
@@ -58,15 +60,22 @@ import Notifications from '../widgets/Notifications'
     ]
 
     return (
-      <div className="flex flex-col gap-y-5 pt-4 border-r border-base-300/30 shadow-lg h-full">
+      <div className="relative flex flex-col gap-y-5 pt-4 border-r border-base-300/30 shadow-lg h-full transition-all duration-500">
+        <button 
+          onClick={() => setMinimize(!minimize)}
+          title={`${minimize ? 'Expand Sidebar' : 'Minimize Sidebar'}`} 
+          className="group absolute bottom-20 right-0 translate-x-1/2 z-20 dark:bg-base-800 bg-base-200 dark:text-base-100 text-base-900 shadow-lg rounded-full p-1"
+        >
+          <ChevronDoubleLeftIcon className={`group-hover:scale-125 transition-all h-4 w-4 ${minimize && 'rotate-180'}`}/>
+        </button>
         <Link onClick={() => setPath('/')} href="/" className="flex flex-row items-center space-x-2 justify-center -translate-x-1 hover:scale-105 transition-transform">
             <Logo className="h-12 w-12 text-primary-600"/>
-            <span className="logoText text-2xl font-semibold">swiftAI</span>
+            {!minimize && <span className="logoText text-2xl font-semibold">swiftAI</span>}
         </Link>
         <nav className="flex flex-1 flex-col">
             <ul className="space-y-1">
               {navigation.map((item) => (
-                <li key={item.name} className={`${item.href === path && 'text-primary-500'} hover:bg-base-100/10 rounded-sm hover:shadow-md pl-4 pr-8 transition-colors`}>
+                <li key={item.name} className={`${item.href === path && 'text-primary-500'} hover:bg-base-100/10 rounded-sm hover:shadow-md ${minimize ? 'px-4' : 'pl-4 pr-8'} transition-all duration-500`}>
                   <Link
                     title={item.name}
                     onClick={() => setPath(item.href)}
@@ -77,7 +86,7 @@ import Notifications from '../widgets/Notifications'
                       className="group-hover:text-primary-600 transition-colors h-6 w-6 shrink-0"
                       aria-hidden="true"
                     />
-                    {item.name}
+                    {!minimize && item.name}
                   </Link>
                 </li>
               ))}
@@ -92,7 +101,7 @@ import Notifications from '../widgets/Notifications'
             {user && 
                 <ul
                     title="User Menu" 
-                    className="flex flex-col items-start absolute -top-2 -translate-y-full right-1/2 translate-x-3/4 -translate-y-1/2 bg-base-100 rounded-sm shadow-lg p-4 text-base-900 z-30 divide-y divide-base-300"
+                    className={`flex flex-col items-start absolute -top-2 -translate-y-full right-1/2  ${minimize ? 'translate-x-full' : 'translate-x-3/4'} -translate-y-1/2 bg-base-100 rounded-sm shadow-lg p-4 text-base-900 z-30 divide-y divide-base-300`}
                 >
                     {userMenu.map((item) => {
                         return (
@@ -116,11 +125,9 @@ import Notifications from '../widgets/Notifications'
                     })}
                 </ul>
             }
-            <div className="flex flex-row items-center pt-6 pb-4 px-6 space-x-4 hover:bg-base-100/10 hover:shadow-md transition-colors">
+            <div className="group flex flex-row items-center pt-6 pb-4 px-6 space-x-4 hover:bg-base-100/10 hover:shadow-md transition-colors">
                 <Avatar />
-                <span className="font-semibold text-sm">
-                    User
-                </span>
+                {!minimize && <span className="font-semibold text-sm">User</span>}
             </div>
         </button>
       </div>

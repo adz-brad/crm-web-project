@@ -4,10 +4,10 @@ import Display from '../components/screens/Display'
 import { ServerThemeProvider } from '@wits/next-themes'
 import Recoil from '../recoil/root'
 import Slide from '../components/navigation/Slide'
+import Popup from '../components/screens/Popup'
 
 export const metadata = {
-  title: 'swiftAI: Intelligent Web CRM',
-  description: 'Web Project CRM'
+  title: 'swiftAI',
 }
 
 export default function RootLayout({ children }) {
@@ -21,6 +21,7 @@ export default function RootLayout({ children }) {
     <html>
       <body className="dark:bg-base-900 dark:text-base-100 flex flex-row h-screen">
         <Recoil>
+          <Popup />
           <Sidebar />
           <Slide />
           <Display>
