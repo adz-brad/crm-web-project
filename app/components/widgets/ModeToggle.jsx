@@ -7,7 +7,7 @@ import { useState, useEffect } from "react"
 
 export default function ModeToggle () {
 
-    const { theme, systemTheme, setTheme } = useTheme()
+    const { theme, setTheme } = useTheme()
     const [ current, setCurrent ] = useState(false)
 
     useEffect(() => {
@@ -19,17 +19,6 @@ export default function ModeToggle () {
         }
     }, [ theme ])
 
-    useEffect(() => {
-        if(systemTheme){
-            setTheme(systemTheme)
-            if(systemTheme === 'dark'){
-                setCurrent(true)
-            }
-            else{
-                setCurrent(false)
-            }
-        }
-    }, [ systemTheme ])
 
     return (
         <Toggle 
