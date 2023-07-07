@@ -4,7 +4,8 @@ import Display from '../components/screens/Display'
 import { ServerThemeProvider } from '@wits/next-themes'
 
 export const metadata = {
-  title: 'Web CRM Project',
+  title: 'swiftAI: Intelligent Web CRM',
+  description: 'Web Project CRM'
 }
 
 export default function RootLayout({ children }) {
