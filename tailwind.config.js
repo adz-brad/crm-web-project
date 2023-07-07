@@ -10,7 +10,8 @@ module.exports = {
   theme: {
     colors: {
       base: colors.stone,
-      primary: colors.blue
+      primary: colors.blue,
+      red: colors.red
     }
   },
   darkMode: 'class',

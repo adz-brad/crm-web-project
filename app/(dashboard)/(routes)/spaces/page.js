@@ -1,7 +1,7 @@
 export default function CRM () {
   return (
     <div>
-        CRM
+        Spaces
     </div>
   )
 }

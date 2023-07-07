@@ -8,9 +8,9 @@ import {
     CodeBracketIcon,
     EnvelopeIcon,
     UserCircleIcon,
-    CreditCardIcon,
     ArrowLeftOnRectangleIcon,
-    Cog8ToothIcon
+    Cog8ToothIcon,
+    CalendarDaysIcon
   } from '@heroicons/react/24/outline'
 
 import Logo from './Logo'
@@ -22,21 +22,10 @@ import { useRouter } from 'next/navigation'
 
 import { useOnClickOutside } from 'usehooks-ts'
 
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: HomeIcon },
-    { name: 'Projects', href: '/projects', icon: FolderIcon },
-    { name: 'Teams', href: '/teams', icon: UsersIcon },
-    { name: 'CRM', href: '/crm', icon: TableCellsIcon },
-    { name: 'Resources', href: '/resources', icon: CodeBracketIcon }
-  ]
+import { slideState, messagesState } from '@/app/recoil/atoms'
+import { useSetRecoilState, useRecoilValue } from 'recoil'
+import Notifications from '../widgets/Notifications'
 
-  const userMenu = [
-    { name: 'Profile', href: '/profile', icon: UserCircleIcon },
-    { name: 'Billing', href: '/billing', icon: CreditCardIcon },
-    { name: 'Messages', onClick: () => console.log('messenger'), icon: EnvelopeIcon },
-    { name: 'Settings', onClick: () => console.log('settings'), icon: Cog8ToothIcon },
-    { name: 'Logout', onClick: () => console.log('Logout'), icon: ArrowLeftOnRectangleIcon }
-  ]
 
   export default function Sidebar() {
 
@@ -45,9 +34,28 @@ import { useOnClickOutside } from 'usehooks-ts'
     const [ path, setPath ] = useState(router.pathname)
     const [ user, setUser ] = useState(false)
 
+    const setSlide = useSetRecoilState(slideState)
+    const notifications = useRecoilValue(messagesState)
+
     const ref = useRef(null)
 
     useOnClickOutside(ref, () => setUser(false))
+
+    const navigation = [
+        { name: 'Dashboard', href: '/', icon: HomeIcon },
+        { name: 'Projects', href: '/projects', icon: FolderIcon },
+        { name: 'Teams', href: '/teams', icon: UsersIcon },
+        { name: 'Spaces', href: '/spaces', icon: TableCellsIcon },
+        { name: 'Calendar', href: '/calendar', icon: CalendarDaysIcon },
+        { name: 'Resources', href: '/resources', icon: CodeBracketIcon }
+    ]
+
+    const userMenu = [
+        { name: 'Profile', onClick: () => setSlide({open: true, item: 'Profile'}), icon: UserCircleIcon },
+        { name: 'Messages', onClick: () => setSlide({open: true, item: 'Messages'}), icon: EnvelopeIcon },
+        { name: 'Settings', onClick: () => setSlide({open: true, item: 'Settings'}), icon: Cog8ToothIcon },
+        { name: 'Logout', onClick: () => console.log('Logout'), icon: ArrowLeftOnRectangleIcon }
+    ]
 
     return (
       <div className="flex flex-col gap-y-5 pt-4 border-r border-base-300/30 shadow-lg h-full">
@@ -75,53 +83,41 @@ import { useOnClickOutside } from 'usehooks-ts'
               ))}
             </ul>
         </nav>
-        <button onClick={() => setUser(!user)}  className="relative">
+        <button  
+            title="User Options"
+            ref={ref} 
+            onClick={() => setUser(!user)}  
+            className="relative"
+        >
             {user && 
-                <ul 
-                    ref={ref}
+                <ul
                     title="User Menu" 
                     className="flex flex-col items-start absolute -top-2 -translate-y-full right-1/2 translate-x-3/4 -translate-y-1/2 bg-base-100 rounded-sm shadow-lg p-4 text-base-900 z-30 divide-y divide-base-300"
                 >
                     {userMenu.map((item) => {
                         return (
                             <li key={item.name}>
-                                {item.href &&
-                                    <Link
-                                        title={item.name}
-                                        className="group flex flex-row items-center space-x-2 min-w-[200px] py-1"
-                                        href={item.href}
-                                    >
-                                        <item.icon
-                                            className="group-hover:text-primary-600 transition-colors h-6 w-6 shrink-0"
-                                            aria-hidden="true"
-                                        />
-                                        <span className="font-semibold">
-                                            {item.name}
-                                        </span>
-                                    </Link>
-                                }
-                                {item.onClick &&
-                                    <button
-                                        title={item.name}
-                                        className="group flex flex-row items-center space-x-2 min-w-[200px] py-1"
-                                        onClick={item.onClick}
-                                    >
-                                        <item.icon
-                                            className="group-hover:text-primary-600 transition-colors h-6 w-6 shrink-0"
-                                            aria-hidden="true"
-                                        />
-                                        <span className="font-semibold">
-                                            {item.name}
-                                        </span>
-                                    </button>
-                                }
+                                <button
+                                    title={item.name}
+                                    className="group flex flex-row items-center space-x-2 min-w-[200px] py-1"
+                                    onClick={item.onClick}
+                                >
+                                    <item.icon
+                                        className="group-hover:text-primary-600 transition-colors h-6 w-6 shrink-0"
+                                        aria-hidden="true"
+                                    />
+                                    <span className="font-medium">
+                                        {item.name}
+                                    </span>
+                                    {item.name === 'Messages' && <Notifications />}
+                                </button>
                             </li>
                         )
                     })}
                 </ul>
             }
             <div className="flex flex-row items-center pt-6 pb-4 px-6 space-x-4 hover:bg-base-100/10 hover:shadow-md transition-colors">
-                <Avatar notifications={[{}]}/>
+                <Avatar />
                 <span className="font-semibold text-sm">
                     User
                 </span>
